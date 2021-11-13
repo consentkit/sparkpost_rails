@@ -38,7 +38,9 @@ module SparkPostRails
 
       result = post_to_api
 
-      process_result result
+      processed_result = process_result result
+      export_result_headers processed_result, mail
+      processed_result
     end
 
     private
@@ -47,9 +49,13 @@ module SparkPostRails
       mail.sparkpost_data.merge!(mail.delivery_method.settings)
     end
 
+    def export_result_headers(result, mail)
+      mail.headers['X-SP-Message-ID'] = result['id']
+    end
+
     def prepare_recipients_from(mail, sparkpost_data)
       if sparkpost_data.has_key?(:recipient_list_id)
-        @data[:recipients] = {list_id: sparkpost_data[:recipient_list_id]}
+        @data[:recipients] = { list_id: sparkpost_data[:recipient_list_id]}
       else
         @data[:recipients] = prepare_addresses(mail.to, mail[:to].display_names)
 
@@ -63,7 +69,7 @@ module SparkPostRails
       end
     end
 
-    def prepare_addresses emails, names
+    def prepare_addresses(emails, names)
       emails = [emails] unless emails.is_a?(Array)
       header_to = emails.join(',')
       emails.each_with_index.map { |email, index| prepare_address(email, index, names, header_to) }
