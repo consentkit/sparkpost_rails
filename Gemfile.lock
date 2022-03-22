@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     sparkpost_rails (1.5.5)
-      actionmailer (>= 4.0, < 7)
-      railties (>= 4.0, < 7)
+      actionmailer (>= 4.0, < 8)
+      railties (>= 4.0, < 8)
 
 GEM
   remote: http://rubygems.org/
